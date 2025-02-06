@@ -23,7 +23,6 @@ export default function HomeLayout() {
             />
           </BackgroundGradient>
 
-          {/* Fixed width for OutputBox */}
           <div className="w-[600px]">
             <OutputBox description={description} loading={loading} />
           </div>

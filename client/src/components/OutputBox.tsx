@@ -14,7 +14,7 @@ function OutputBox({
   }
 
   if (!description) {
-    return null; // Handle case when description is empty
+    return null; 
   }
 
   return (

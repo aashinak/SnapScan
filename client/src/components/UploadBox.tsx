@@ -22,9 +22,11 @@ export function FileUploadBox({
 
     const selectedFile = files[0];
 
-    // Check if the file is a PDF or JPG
-    if (selectedFile.type !== "image/png") {
-      alert("Only PDF and JPG files are allowed.");
+    if (
+      selectedFile.type !== "image/png" &&
+      selectedFile.type !== "image/jpeg"
+    ) {
+      alert("Only PNG and JPG files are allowed.");
       return;
     }
 
@@ -39,7 +41,7 @@ export function FileUploadBox({
       formData.append("file", file!);
       const res = await axios.post("http://localhost:5000/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Set the content type for file upload
+          "Content-Type": "multipart/form-data",
         },
       });
 
