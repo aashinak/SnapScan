@@ -76,5 +76,5 @@ services:
   
   Once the containers are up and running, you can access the following:
 
-  Client: Open your browser and go to http://localhost:3000.
-  Server: The backend API will be available at http://localhost:5000.
+  - Client: Open your browser and go to http://localhost:3000.
+  - Server: The backend API will be available at http://localhost:5000.
