@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  client:
+    image: aashinak/snapscan-client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  server:
+    image: aashinak/snapscan-server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - ollama
+    environment:
+      - HOSTIP=ollama  # Update this if you are running Ollama locally (provide IP if linux, if windows "docker.for.win.localhost")
+
+# if you have installed Ollama locally, you can remove the following portion
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"  
+    runtime: nvidia  # if you're using an NVIDIA GPU (remove this section if not using GPU)
+    environment:
+      - MODEL=gemma2:2b  # The model to use (gemma2:2b)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]  # Uncomment if you're using GPU support (remove if not)
