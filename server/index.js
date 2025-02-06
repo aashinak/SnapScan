@@ -14,11 +14,14 @@ const upload = multer({ dest: "uploads/" });
 
 // OCR Processing
 app.post("/upload", upload.single("file"), async (req, res) => {
+  const { path } = req.file;
+
+  if (!path) {
+    return res.status(400).json({ message: "File required" });
+  }
+
   try {
-    const { path } = req.file;
-    if (!path) {
-      res.status(400).json({ message: "File required" });
-    }
+    console.log(path);
 
     // Extract text using Tesseract.js
     const {
@@ -26,18 +29,33 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     } = await Tesseract.recognize(path, "eng");
 
     // Generate a description using Ollama
-    const aiResponse = await axios.post("http://localhost:11434/api/generate", {
-      model: "gemma2:2b",
-      prompt: `Summarize this text: ${text}`,
-      stream: false,
-    });
+    const aiResponse = await axios.post(
+      `http://${process.env.HOSTIP}:11434/api/generate`,
+      {
+        model: "gemma2:2b",
+        prompt: `Summarize this text: ${text}`,
+        stream: false,
+      }
+    );
 
     const description = aiResponse.data.response;
 
-    fs.unlink(path);
+    // Delete the uploaded file after processing
+    try {
+      await fs.unlink(path);
+    } catch (err) {
+      console.error(`Error deleting file: ${path}`, err);
+    }
+
     res.json({ extractedText: text, description });
   } catch (error) {
-    fs.unlink(path);
+    // Ensure to delete the file even in case of an error
+    try {
+      await fs.unlink(path);
+    } catch (err) {
+      console.error(`Error deleting file: ${path}`, err);
+    }
+
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
   }
